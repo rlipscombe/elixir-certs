@@ -16,3 +16,15 @@ Certificate Authority, in Elixir, using 'x509' library.
     --template server \
     --subject '/CN=server'
 ```
+
+## Requirements
+
+- Elixir >= 1.12.0. We use `Mix.install/2`.
+- Erlang >= 24.0.2. Fixes https://github.com/erlang/otp/issues/4861.
+
+## Dependencies
+
+These are managed by `Mix.install/2` at the top of the script; I mention them here for interest:
+
+- https://hex.pm/packages/x509
+- https://hex.pm/packages/optimus
