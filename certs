@@ -92,8 +92,8 @@ defmodule Certs do
         ca_key = X509.PrivateKey.new_ec(:secp256r1)
         ca_crt = X509.Certificate.self_signed(ca_key, rdn, template: template(template))
 
-        File.write!(out_key, X509.PrivateKey.to_pem(ca_key))
-        File.write!(out_cert, X509.Certificate.to_pem(ca_crt))
+        File.write!(out_key, X509.PrivateKey.to_pem(ca_key), [:exclusive])
+        File.write!(out_cert, X509.Certificate.to_pem(ca_crt), [:exclusive])
 
       {[:create_cert],
        %Optimus.ParseResult{
@@ -115,8 +115,8 @@ defmodule Certs do
         crt =
           X509.Certificate.new(pub, rdn, issuer_cert, issuer_key, template: template(template))
 
-        File.write!(out_key, X509.PrivateKey.to_pem(key))
-        File.write!(out_cert, X509.Certificate.to_pem(crt))
+        File.write!(out_key, X509.PrivateKey.to_pem(key), [:exclusive])
+        File.write!(out_cert, X509.Certificate.to_pem(crt), [:exclusive])
     end
   end
 
