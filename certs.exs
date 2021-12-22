@@ -14,9 +14,9 @@ defmodule Certs do
             name: "self-signed",
             about: "Create a self-signed certificate",
             options: [
-              rdn: [
-                long: "--rdn",
-                value_name: "RDN",
+              subject: [
+                long: "--subject",
+                value_name: "SUBJECT",
                 required: true,
                 parser: :string
               ],
@@ -43,9 +43,9 @@ defmodule Certs do
           create_cert: [
             name: "create-cert",
             options: [
-              rdn: [
-                long: "--rdn",
-                value_name: "RDN",
+              subject: [
+                long: "--subject",
+                value_name: "SUBJECT",
                 required: true,
                 parser: :string
               ],
@@ -87,10 +87,10 @@ defmodule Certs do
     case Optimus.parse!(opts, argv) do
       {[:self_signed],
        %Optimus.ParseResult{
-         options: %{rdn: rdn, out_cert: out_cert, out_key: out_key, template: template}
+         options: %{subject: subject, out_cert: out_cert, out_key: out_key, template: template}
        }} ->
         ca_key = X509.PrivateKey.new_ec(:secp256r1)
-        ca_crt = X509.Certificate.self_signed(ca_key, rdn, template: template(template))
+        ca_crt = X509.Certificate.self_signed(ca_key, subject, template: template(template))
 
         File.write!(out_key, X509.PrivateKey.to_pem(ca_key), [:exclusive])
         File.write!(out_cert, X509.Certificate.to_pem(ca_crt), [:exclusive])
@@ -98,7 +98,7 @@ defmodule Certs do
       {[:create_cert],
        %Optimus.ParseResult{
          options: %{
-           rdn: rdn,
+           subject: subject,
            issuer_cert: issuer_cert,
            issuer_key: issuer_key,
            out_cert: out_cert,
@@ -113,7 +113,7 @@ defmodule Certs do
         pub = X509.PublicKey.derive(key)
 
         crt =
-          X509.Certificate.new(pub, rdn, issuer_cert, issuer_key, template: template(template))
+          X509.Certificate.new(pub, subject, issuer_cert, issuer_key, template: template(template))
 
         File.write!(out_key, X509.PrivateKey.to_pem(key), [:exclusive])
         File.write!(out_cert, X509.Certificate.to_pem(crt), [:exclusive])
