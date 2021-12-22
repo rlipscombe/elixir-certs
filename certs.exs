@@ -130,8 +130,29 @@ defmodule Certs do
     end
   end
 
-  defp template("root-ca"), do: :root_ca
-  defp template("server"), do: :server
+  defp template("root-ca", _subject), do: :root_ca
+
+  defp template("server", subject) do
+    commonName =
+      X509.RDNSequence.new(subject)
+      |> X509.RDNSequence.get_attr(:commonName)
+
+    import X509.Certificate.Extension
+
+    %X509.Certificate.Template{
+      # 1 year, plus a 30 days grace period
+      validity: 365 + 30,
+      hash: :sha256,
+      extensions: [
+        basic_constraints: basic_constraints(false),
+        key_usage: key_usage([:digitalSignature, :keyEncipherment]),
+        ext_key_usage: ext_key_usage([:serverAuth, :clientAuth]),
+        subject_key_identifier: true,
+        authority_key_identifier: true,
+        subject_alt_name: subject_alt_name(commonName)
+      ]
+    }
+  end
 end
 
 Certs.main(System.argv())
