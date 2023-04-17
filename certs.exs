@@ -62,7 +62,7 @@ defmodule Certs do
   defp template("root-ca", _subject), do: :root_ca
 
   defp template("server", subject) do
-    commonName =
+    [commonName] =
       X509.RDNSequence.new(subject)
       |> X509.RDNSequence.get_attr(:commonName)
 
@@ -78,7 +78,7 @@ defmodule Certs do
         ext_key_usage: ext_key_usage([:serverAuth, :clientAuth]),
         subject_key_identifier: true,
         authority_key_identifier: true,
-        subject_alt_name: subject_alt_name(commonName)
+        subject_alt_name: subject_alt_name([commonName])
       ]
     }
   end
